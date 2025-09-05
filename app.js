@@ -1,9 +1,14 @@
 const express = require("express");
 const app = express();
 const { PORT = 3000 } = process.env;
-
 const fs = require("fs");
 const path = require("path");
+const users = require("./data/users.json");
+const cards = require("./data/cards.json");
+
+app.get("/", (req, res) => {
+  res.send("Servidor Express funcionando en el puerto 3000");
+});
 
 // RUTA: Lista de cartas --------
 
@@ -44,10 +49,6 @@ app.get("/users/:id", (req, res) => {
 
 app.use((req, res) => {
   res.status(404).json({ message: "Recurso solicitado no encontrado" });
-});
-
-app.get("/", (req, res) => {
-  res.send("Servidor Express funcionando en el puerto 3000");
 });
 
 // Iniciar servidor
