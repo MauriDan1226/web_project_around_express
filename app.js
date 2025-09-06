@@ -3,8 +3,9 @@ const app = express();
 const { PORT = 3000 } = process.env;
 const fs = require("fs");
 const path = require("path");
-const users = require("./data/users.json");
-const cards = require("./data/cards.json");
+const users = require("./routers/users.js");
+const cards = require("./routers/cards.js");
+const { use } = require("react");
 
 app.get("/", (req, res) => {
   res.send("Servidor Express funcionando en el puerto 3000");
@@ -13,37 +14,11 @@ app.get("/", (req, res) => {
 // RUTA: Lista de cartas --------
 
 app.use(express.json());
-app.get("/cards", (req, res) => {
-  const filePath = path.join(__dirname, "./data/cards.json");
-  const data = fs.readFileSync(filePath, "utf8");
-  const cards = JSON.parse(data);
-  res.json(cards);
-});
+app.use("/cards", cards);
 
 // RUTA: Lista de usuarios --------
 
-app.get("/users", (req, res) => {
-  const filePath = path.join(__dirname, "./data/users.json");
-  const data = fs.readFileSync(filePath, "utf8");
-  const users = JSON.parse(data);
-  res.json(users);
-});
-
-//  RUTA: Usuario por ID --------
-
-app.get("/users/:id", (req, res) => {
-  const filePath = path.join(__dirname, "./data/users.json");
-  const data = fs.readFileSync(filePath, "utf8");
-  const users = JSON.parse(data);
-
-  const user = users.find((u) => u.id === req.params.id);
-
-  if (!user) {
-    return res.status(404).json({ message: "ID de usuario no encontrado" });
-  }
-
-  res.json(user);
-});
+app.use("/users", users);
 
 //  MANEJO DE RUTAS NO EXISTENTES --------
 
