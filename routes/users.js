@@ -1,30 +1,20 @@
-const fs = require("fs");
-const path = require("path");
-const express = require("express");
+const usersRouter = require("express").Router();
+const {
+  getUsers,
+  getUserById,
+  createUser,
+  setUserInfo,
+  setUserAvatar,
+} = require("../controllers/users");
 
-const router = express.router();
+usersRouter.get("/users", getUsers);
 
-router.get("/", (req, res) => {
-  const filePath = path.join(__dirname, "./data/users.json");
-  const data = fs.readFileSync(filePath, "utf8");
-  const users = JSON.parse(data);
-  res.json(users);
-});
+usersRouter.get("/users/:id", getUserById);
 
-//  RUTA: Usuario por ID --------
+usersRouter.post("/users", createUser);
 
-router.get("/:id", (req, res) => {
-  const filePath = path.join(__dirname, "./data/users.json");
-  const data = fs.readFileSync(filePath, "utf8");
-  const users = JSON.parse(data);
+usersRouter.patch("/users/me", setUserInfo);
 
-  const user = users.find((u) => u.id === req.params.id);
+usersRouter.patch("/users/me/avatar", setUserAvatar);
 
-  if (!user) {
-    return res.status(404).json({ message: "ID de usuario no encontrado" });
-  }
-
-  res.json(user);
-});
-
-module.exports = router;
+module.exports = usersRouter;

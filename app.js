@@ -1,30 +1,33 @@
 const express = require("express");
 const app = express();
 const { PORT = 3000 } = process.env;
-const fs = require("fs");
-const path = require("path");
-const users = require("./routers/users.js");
-const cards = require("./routers/cards.js");
-const { use } = require("react");
+const mongoose = require("mongoose");
 
-app.get("/", (req, res) => {
-  res.send("Servidor Express funcionando en el puerto 3000");
-});
+// Importar rutas
+const usersRouter = require("./routes/users.js");
+const cardsRouter = require("./routes/cards.js");
 
-// RUTA: Lista de cartas --------
-
+// Middleware para parsear JSON
 app.use(express.json());
-app.use("/cards", cards);
 
-// RUTA: Lista de usuarios --------
+// Conexión a MongoDB
+mongoose.connect("mongodb://localhost:27017/aroundb");
 
-app.use("/users", users);
-
-//  MANEJO DE RUTAS NO EXISTENTES --------
-
-app.use((req, res) => {
-  res.status(404).json({ message: "Recurso solicitado no encontrado" });
+// Middleware temporal para simular usuario logueado
+app.use((req, res, next) => {
+  req.user = {
+    _id: "5d8b8592978f8bd833ca8133", // id de prueba
+  };
+  next();
 });
+
+// Rutas
+app.get("/", (req, res) => {
+  res.send("Servidor Express funcionando en el puerto 3000 ");
+});
+
+app.use("/users", usersRouter);
+app.use("/cards", cardsRouter);
 
 // Iniciar servidor
 app.listen(PORT, () => {
